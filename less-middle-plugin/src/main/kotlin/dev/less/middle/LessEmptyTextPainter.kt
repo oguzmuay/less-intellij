@@ -14,7 +14,7 @@ import javax.swing.JComponent
 class LessEmptyTextPainter : EditorEmptyTextPainter() {
 
     /** Draws the centered title, then one row per shortcut: label on the left, key caps on the right. */
-    override fun paintEmptyText(splitters: JComponent, g: Graphics) {
+    override fun paintEmptyText(splitters: JComponent, component: JComponent, g: Graphics) {
         val g2 = g.create() as Graphics2D
         try {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
@@ -24,13 +24,13 @@ class LessEmptyTextPainter : EditorEmptyTextPainter() {
             val tableWidth = JBUI.scale(340)
             val titleHeight = JBUI.scale(70)
             val totalHeight = titleHeight + rows.size * rowHeight
-            val left = (splitters.width - tableWidth) / 2
-            var y = (splitters.height - totalHeight) / 2
+            val left = (component.width - tableWidth) / 2
+            var y = (component.height - totalHeight) / 2
 
             g2.font = UIUtil.getLabelFont().deriveFont(Font.BOLD, JBUI.scale(40).toFloat())
             g2.color = JBColor.namedColor("Editor.foreground", UIUtil.getInactiveTextColor())
             val title = "LESS"
-            g2.drawString(title, (splitters.width - g2.fontMetrics.stringWidth(title)) / 2, y + JBUI.scale(40))
+            g2.drawString(title, (component.width - g2.fontMetrics.stringWidth(title)) / 2, y + JBUI.scale(40))
             y += titleHeight
 
             for ((row, caps) in rows) {
