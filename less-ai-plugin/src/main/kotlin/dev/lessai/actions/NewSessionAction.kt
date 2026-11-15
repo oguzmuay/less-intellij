@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.ToolWindowManager
 import dev.lessai.dialog.NewSessionDialog
 import dev.lessai.session.SessionManager
@@ -27,7 +28,10 @@ class NewSessionAction : AnAction(), DumbAware {
         val manager = SessionManager.getInstance(project)
         val dialog = NewSessionDialog(project)
         if (!dialog.showAndGet()) return
-        manager.create(dialog.toRequest())
-        ToolWindowManager.getInstance(project).getToolWindow("AI")?.activate(null)
+        val session = manager.create(dialog.toRequest())
+        // Focus after activation, otherwise the tool window's default focus target (session list) wins.
+        ToolWindowManager.getInstance(project).getToolWindow("AI")?.activate {
+            IdeFocusManager.getInstance(project).requestFocus(session.widget.preferredFocusableComponent, true)
+        }
     }
 }

@@ -45,6 +45,8 @@ class SessionManager(private val project: Project) : Disposable {
         val options = ShellStartupOptions.Builder().workingDirectory(project.basePath).build()
         val widget = LocalTerminalDirectRunner.createTerminalRunner(project)
             .startShellTerminalWidget(sessionDisposable, options, true)
+        TerminalEscapePassthrough.install(widget)
+        TerminalSessionSwitchKeys.install(widget, this)
         widget.sendCommandToExecute(command)
 
         val session = AiSession(id, name, request.provider, widget, command, sessionDisposable)
