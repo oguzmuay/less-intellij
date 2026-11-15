@@ -58,10 +58,12 @@
     <keyboard-shortcut first-keystroke="alt meta OPEN_BRACKET" />
   </action>
   <action id="RunAnything" />
+  <action id="Vcs.QuickListPopupAction" />
   <action id="SelectNextOccurrence">
     <keyboard-shortcut first-keystroke="meta d" />
   </action>
-  <action id="SelectOpenedFile">
+  <action id="FocusEditor">
     <keyboard-shortcut first-keystroke="meta 2" />
   </action>
+  <action id="Vcs.UpdateProject" />
 </keymap>
