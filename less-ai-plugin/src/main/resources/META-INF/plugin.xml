@@ -8,6 +8,8 @@
     <depends>org.jetbrains.plugins.terminal</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable parentId="tools" instance="dev.lessai.settings.LessAiConfigurable"
+                                 id="dev.lessai.settings" displayName="LESS AI"/>
         <toolWindow id="AI" anchor="right" secondary="false"
                     factoryClass="dev.lessai.toolwindow.AiToolWindowFactory"/>
     </extensions>

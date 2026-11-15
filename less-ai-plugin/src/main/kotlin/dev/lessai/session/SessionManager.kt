@@ -6,12 +6,11 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.concurrency.AppExecutorUtil
+import dev.lessai.status.StatusCoordinator
 import org.jetbrains.plugins.terminal.LocalTerminalDirectRunner
 import org.jetbrains.plugins.terminal.ShellStartupOptions
 import java.util.UUID
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.TimeUnit
 
 /** Owns the project's AI sessions and their terminal widgets; must be used from the EDT. */
 @Service(Service.Level.PROJECT)
@@ -38,18 +37,21 @@ class SessionManager(private val project: Project) : Disposable {
         ApplicationManager.getApplication().assertIsDispatchThread()
         val name = request.name?.trim()?.takeIf { it.isNotBlank() }
             ?: CommandBuilder.autoName(request.provider, sessionList.map { it.name })
-        val command = CommandBuilder.buildCommand(request)
+        val id = UUID.randomUUID().toString()
+        val context = StatusCoordinator.launchContextFor(id, request.provider) +
+            MailboxLaunch.contextFor(project, id, request.provider)
+        val command = CommandBuilder.buildCommand(request, context)
         val sessionDisposable = Disposer.newDisposable(this, "LessAi session $name")
         val options = ShellStartupOptions.Builder().workingDirectory(project.basePath).build()
         val widget = LocalTerminalDirectRunner.createTerminalRunner(project)
             .startShellTerminalWidget(sessionDisposable, options, true)
         widget.sendCommandToExecute(command)
 
-        val session = AiSession(UUID.randomUUID().toString(), name, request.provider, widget, command, sessionDisposable)
+        val session = AiSession(id, name, request.provider, widget, command, sessionDisposable)
         sessionList.add(session)
         fire { it.sessionsChanged() }
         selected = session
-        scheduleIdle(session)
+        attachStatusCoordinator(session)
         return session
     }
 
@@ -74,7 +76,7 @@ class SessionManager(private val project: Project) : Disposable {
         fire { it.sessionUpdated(session) }
     }
 
-    /** Updates the session status and notifies listeners; hook for later status detection. */
+    /** Updates the session status and notifies listeners; called by the status coordinators on the EDT. */
     fun setStatus(session: AiSession, status: SessionStatus) {
         if (session.status == status || session !in sessionList) return
         session.status = status
@@ -108,13 +110,15 @@ class SessionManager(private val project: Project) : Disposable {
         selected = sessionList[next]
     }
 
-    /** Placeholder status logic: flips STARTING to IDLE a few seconds after the command was sent. */
-    private fun scheduleIdle(session: AiSession) {
-        AppExecutorUtil.getAppScheduledExecutorService().schedule({
-            ApplicationManager.getApplication().invokeLater({
-                if (session.status == SessionStatus.STARTING) setStatus(session, SessionStatus.IDLE)
-            }, project.disposed)
-        }, IDLE_DELAY_SECONDS, TimeUnit.SECONDS)
+    /**
+     * Starts real status detection for the session; the coordinator is disposed together with the
+     * session (closing it stops polling and deletes its temp files).
+     */
+    internal fun attachStatusCoordinator(session: AiSession): StatusCoordinator {
+        val coordinator = StatusCoordinator(project, session)
+        Disposer.register(session.disposable, coordinator)
+        coordinator.start()
+        return coordinator
     }
 
     /** Invokes [action] for every registered listener. */
@@ -123,8 +127,6 @@ class SessionManager(private val project: Project) : Disposable {
     }
 
     companion object {
-        private const val IDLE_DELAY_SECONDS = 3L
-
         /** Returns the project's session manager service. */
         fun getInstance(project: Project): SessionManager = project.service()
     }

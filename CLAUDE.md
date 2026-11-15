@@ -11,9 +11,14 @@ Aşağıdaki bölüm `less-ai-plugin` içindir. LESS editörünün AI panelini (
 Tam plan: `docs/plan.md`. Kapsam kararı: **tam LESS eşdeğeri**, dil Kotlin.
 
 ## Durum
-- Aşama 0, 1, 2 kodlandı ve derleniyor; **hiçbiri IDE'de çalışırken görülmedi**. Aşama 2: `session/` (AiProvider, SessionStatus, NewSessionRequest, CommandBuilder, AiSession, SessionManager, SessionListener), `toolwindow/` (AiToolWindowFactory, SessionListPanel, SessionContentPanel, SessionCellRenderer), `dialog/NewSessionDialog`, `actions/` (New/Rename/Close/Next/Previous), `plugin.xml` action kayıtları, keymap: Cmd+3 AI paneli, Cmd+T yeni oturum, Opt+Cmd+[ / ] oturum geçişi.
-- Bilinen belirsizlikler: `TerminalWidget.sendCommandToExecute` kabuk henüz başlamadıysa (deferStart=true) komutu bekletiyor mu; oturum durumu şimdilik sahte (STARTING -> 3 sn sonra IDLE).
-- Sıradaki: Aşama 3 (Claude hook'larıyla gerçek durum), 4 (Codex/Gemini/Ollama durumu), 5 (inbox), 6 (layout'ta `AIAssistant` -> `AI`, ayarlar sayfası).
+- Aşama 0-6 kodlandı ve derleniyor; **hiçbiri IDE'de çalışırken görülmedi**. Aşama 5: `inbox/` (MailboxService, InboxNotifier, MailMessage, MailboxListener) + `toolwindow/InboxPanel` (panelde Sessions ve Inbox sekmeleri). Aşama 6: `settings/` (LessAiSettings, LessAiConfigurable; Settings > Tools > LESS AI), layout'ta `AIAssistant` -> `AI`. Aşama 2: `session/` (AiProvider, SessionStatus, NewSessionRequest, CommandBuilder, AiSession, SessionManager, SessionListener), `toolwindow/` (AiToolWindowFactory, SessionListPanel, SessionContentPanel, SessionCellRenderer), `dialog/NewSessionDialog`, `actions/` (New/Rename/Close/Next/Previous), `plugin.xml` action kayıtları, keymap: Cmd+3 AI paneli, Cmd+T yeni oturum, Opt+Cmd+[ / ] oturum geçişi.
+- Bilinen belirsizlikler: `TerminalWidget.sendCommandToExecute` kabuk henüz başlamadıysa (deferStart=true) komutu bekletiyor mu.
+- **Durum tespiti (Aşama 3+4, derleniyor, IDE'de doğrulanmadı)** — `status/` paketi, oturum başına `StatusCoordinator` (oturum disposable'ına bağlı; kapanınca polling durur, geçici dosyalar silinir). Geçici dosyalar: `PathManager.getSystemPath()/less-ai/{status,prompts}/<sessionId>.*`.
+  - Claude (otoriter): `--settings <id>.settings.json` ile hook'lar (`SessionStart`/`Stop` -> idle, `UserPromptSubmit`/`PostToolUse` -> working, `Notification` -> stdin'de `permission_prompt`/"needs your permission" varsa approval, yoksa idle) `<id>.hook.sh` (POSIX sh, jq yok) üzerinden `<id>.status` dosyasına yazar; `StatusFileWatcher` 500 ms'de bir okur. İlk hook geldikten sonra sezgi yok sayılır.
+  - Codex: `-c 'notify=["sh","-c","printf idle > <id>.status"]'` (tur bitince idle; kullanıcının kendi `notify` ayarını bu oturumda ezer) + sezgi.
+  - Hepsi için sezgi (`OutputHeuristicStatusSource`): JediTerm `TerminalTextBuffer.addModelListener` ile kirli bayrağı + `TerminalWidget.getText()` son 15 satır; metin değişiyor -> WORKING, 2.5 sn sessiz -> IDLE, `(y/n)`, `do you want to proceed`, `allow this`, `approve` ... -> WAITING_APPROVAL.
+  - Başlatma: `CommandBuilder.buildCommand(request, LaunchContext)`; `MailboxLaunch` env (`LESS_AI_NAME`, `LESS_AI_DIR`) + prompt dosyası (`--append-system-prompt "$(cat f)"`, Codex `-c "developer_instructions=$(cat f)"` TOML string) ekler. Komut POSIX kabuk sözdizimi varsayar (fish'te `$(...)` 3.4+ ister).
+- Sıradaki: IDE'de elle doğrulama (aşağıdaki riskler), sonra düzeltmeler. Henüz yok: LESS'in `less` MCP sunucusunun karşılığı (ajanlara IDE araçları).
 
 ## Build
 Makinede sistem JDK'sı ve Gradle yok. IntelliJ'in gömülü JBR'si (Java 25) kullanılır:

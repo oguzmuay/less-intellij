@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import dev.lessai.session.AiProvider
 import dev.lessai.session.CommandBuilder
 import dev.lessai.session.NewSessionRequest
+import dev.lessai.settings.LessAiSettings
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
 
@@ -26,8 +27,13 @@ class NewSessionDialog(project: Project) : DialogWrapper(project) {
     private val nameField = JBTextField().apply { emptyText.text = "Automatic" }
     private val configDirField = TextFieldWithBrowseButton().apply {
         addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle("Claude Config Folder"))
+        text = LessAiSettings.getInstance().defaultClaudeConfigDir
     }
-    private val modelBox = ComboBox<String>().apply { isEditable = true }
+    private val modelBox = ComboBox<String>().apply {
+        isEditable = true
+        val defaultModel = LessAiSettings.getInstance().defaultOllamaModel
+        if (defaultModel.isNotBlank()) selectedItem = defaultModel
+    }
     private var modelsLoaded = false
 
     init {
@@ -65,7 +71,9 @@ class NewSessionDialog(project: Project) : DialogWrapper(project) {
         ApplicationManager.getApplication().executeOnPooledThread {
             val models = CommandBuilder.listOllamaModels()
             ApplicationManager.getApplication().invokeLater({
+                val preferred = (modelBox.editor.item as? String)?.trim().orEmpty()
                 models.forEach { modelBox.addItem(it) }
+                if (preferred.isNotEmpty()) modelBox.selectedItem = preferred
             }, ModalityState.any())
         }
     }

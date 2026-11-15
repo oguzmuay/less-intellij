@@ -60,7 +60,7 @@
           "isVisible": true
         },
         {
-          "id": "AIAssistant",
+          "id": "AI",
           "order": 1,
           "anchor": "RIGHT",
           "weight": 0.25,
