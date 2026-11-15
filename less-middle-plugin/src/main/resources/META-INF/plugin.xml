@@ -11,5 +11,8 @@
             serviceInterface="com.intellij.openapi.fileEditor.impl.EditorEmptyTextPainter"
             serviceImplementation="dev.less.middle.LessEmptyTextPainter"
             overrides="true"/>
+        <statusBarWidgetFactory id="dev.less.middle.SystemMonitor"
+                                implementation="dev.less.middle.monitor.SystemMonitorWidgetFactory"
+                                order="last"/>
     </extensions>
 </idea-plugin>
