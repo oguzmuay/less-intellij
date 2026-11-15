@@ -1,0 +1,99 @@
+<application>
+  <component name="ToolWindowLayout"><![CDATA[{
+  "layouts": {
+    "Custom": {
+      "v2": [
+        {
+          "id": "Project",
+          "order": 0,
+          "weight": 0.25,
+          "isVisible": true,
+          "contentUiType": "COMBO"
+        },
+        {
+          "id": "Commit",
+          "order": 1,
+          "weight": 0.25,
+          "isVisible": true
+        },
+        {
+          "id": "Structure",
+          "order": 2,
+          "weight": 0.25
+        },
+        {
+          "id": "air.threads",
+          "order": 3,
+          "weight": 0.25
+        },
+        {
+          "id": "Services",
+          "order": 0,
+          "anchor": "BOTTOM",
+          "weight": 0.25,
+          "isVisible": true
+        },
+        {
+          "id": "Version Control",
+          "order": 1,
+          "anchor": "BOTTOM",
+          "weight": 0.25,
+          "isVisible": true
+        },
+        {
+          "id": "Problems",
+          "order": 2,
+          "anchor": "BOTTOM",
+          "weight": 0.25
+        },
+        {
+          "id": "Problems View",
+          "order": 3,
+          "anchor": "BOTTOM",
+          "weight": 0.25
+        },
+        {
+          "id": "Terminal",
+          "order": 0,
+          "anchor": "RIGHT",
+          "weight": 0.25,
+          "isVisible": true
+        },
+        {
+          "id": "AIAssistant",
+          "order": 1,
+          "anchor": "RIGHT",
+          "weight": 0.25,
+          "isVisible": true
+        },
+        {
+          "id": "Database",
+          "order": 2,
+          "anchor": "RIGHT",
+          "weight": 0.25,
+          "isVisible": true
+        },
+        {
+          "id": "Maven",
+          "order": 3,
+          "anchor": "RIGHT",
+          "weight": 0.25
+        },
+        {
+          "id": "Gradle",
+          "order": 4,
+          "anchor": "RIGHT",
+          "weight": 0.25
+        },
+        {
+          "id": "Notifications",
+          "order": 5,
+          "anchor": "RIGHT",
+          "weight": 0.25,
+          "contentUiType": "COMBO"
+        }
+      ]
+    }
+  }
+}]]></component>
+</application>
