@@ -34,3 +34,8 @@ sethandler <D-S-Left> n:vim i-v:ide
 sethandler <D-S-Right> n:vim i-v:ide
 nmap <D-S-Left> <Action>(PreviousTab)
 nmap <D-S-Right> <Action>(NextTab)
+
+" --- Notes: Cmd+N opens the notes modal outside Insert mode; Insert mode keeps the IDE's Cmd+N (Generate).
+sethandler <D-n> n-v:vim i:ide
+nmap <D-n> <Action>(LessMiddle.OpenNotes)
+vmap <D-n> <Action>(LessMiddle.OpenNotes)

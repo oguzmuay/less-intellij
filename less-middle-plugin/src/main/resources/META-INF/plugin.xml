@@ -28,5 +28,9 @@
                 class="dev.less.middle.preview.TogglePreviewAction"
                 text="Toggle Preview"
                 description="Toggle the current file between text and preview (Markdown, HTML, SVG, ...)"/>
+        <action id="LessMiddle.OpenNotes"
+                class="dev.less.middle.notes.OpenNotesAction"
+                text="Notes"
+                description="Open the notes modal (tabs: Cmd+Shift+Left/Right, new: Cmd+T, delete: Cmd+W)"/>
     </actions>
 </idea-plugin>

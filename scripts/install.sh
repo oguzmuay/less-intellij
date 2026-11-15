@@ -27,4 +27,8 @@ done
 
 mkdir -p "$CONFIG/keymaps"
 cp ide-config/LESS-keymap.xml "$CONFIG/keymaps/LESS.xml"
+if [ -f "$HOME/.ideavimrc" ] && ! cmp -s ide-config/ideavimrc "$HOME/.ideavimrc"; then
+  cp "$HOME/.ideavimrc" "$HOME/.ideavimrc.bak"       # keep the previous config once
+fi
+cp ide-config/ideavimrc "$HOME/.ideavimrc"
 echo "Done. Start IntelliJ and pick the LESS keymap in Settings > Keymap."
