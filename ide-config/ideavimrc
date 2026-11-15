@@ -1,0 +1,36 @@
+" IdeaVim config for the LESS setup. Installed to ~/.ideavimrc by scripts/install.sh.
+" Rule: Cmd (meta) shortcuts stay with the IDE / LESS keymap; Ctrl shortcuts belong to Vim.
+
+set scrolloff=5
+set incsearch
+
+" Don't use Ex mode, use Q for formatting.
+map Q gq
+
+" --- IdeaVim plugins
+Plug 'machakann/vim-highlightedyank'
+Plug 'tpope/vim-commentary'
+
+" --- Shortcut conflicts: Ctrl chords go to Vim (the LESS keymap frees Ctrl+V from the IDE).
+" Vim-owned in all modes it uses them in.
+sethandler <C-A> n-v:vim
+sethandler <C-B> n-v:vim
+sethandler <C-D> n-v:vim
+sethandler <C-E> n-v:vim
+sethandler <C-F> n-v:vim
+sethandler <C-O> n-v:vim
+sethandler <C-R> n:vim
+sethandler <C-U> n-v:vim
+sethandler <C-V> n-v:vim
+sethandler <C-W> n-v:vim
+sethandler <C-X> n-v:vim
+sethandler <C-Y> n-v:vim
+sethandler <C-[> a:vim
+sethandler <C-C> n-v:vim
+
+" --- Tabs: Cmd+Shift+Left/Right switch editor tabs in Normal mode only.
+" Insert and Visual mode keep the IDE behaviour (select to line start/end).
+sethandler <D-S-Left> n:vim i-v:ide
+sethandler <D-S-Right> n:vim i-v:ide
+nmap <D-S-Left> <Action>(PreviousTab)
+nmap <D-S-Right> <Action>(NextTab)
