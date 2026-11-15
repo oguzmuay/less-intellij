@@ -18,8 +18,10 @@ if pgrep -f "$IDEA_APP/Contents/MacOS/idea" >/dev/null; then
 fi
 
 ./gradlew buildPlugin --no-daemon -q
-for z in less-*-plugin/build/distributions/*.zip; do
+for dir in less-*-plugin; do
+  z=$(ls -t "$dir"/build/distributions/*.zip | head -1)   # newest zip only
   echo "Installing $z"
+  rm -rf "$CONFIG/plugins/$dir"                             # drop old jars of previous versions
   unzip -q -o "$z" -d "$CONFIG/plugins"
 done
 
