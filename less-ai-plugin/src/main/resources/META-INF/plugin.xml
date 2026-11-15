@@ -11,4 +11,22 @@
         <toolWindow id="AI" anchor="right" secondary="false"
                     factoryClass="dev.lessai.toolwindow.AiToolWindowFactory"/>
     </extensions>
+
+    <actions>
+        <action id="LessAi.NewSession" class="dev.lessai.actions.NewSessionAction"
+                text="New AI Session" description="Start a new AI agent session" icon="AllIcons.General.Add"/>
+        <action id="LessAi.RenameSession" class="dev.lessai.actions.RenameSessionAction"
+                text="Rename AI Session" description="Rename the selected AI session" icon="AllIcons.Actions.Edit"/>
+        <action id="LessAi.CloseSession" class="dev.lessai.actions.CloseSessionAction"
+                text="Close AI Session" description="Close the selected AI session" icon="AllIcons.Actions.Cancel"/>
+        <action id="LessAi.NextSession" class="dev.lessai.actions.NextSessionAction"
+                text="Next AI Session" description="Select the next AI session"/>
+        <action id="LessAi.PreviousSession" class="dev.lessai.actions.PreviousSessionAction"
+                text="Previous AI Session" description="Select the previous AI session"/>
+        <group id="LessAi.Toolbar" popup="false">
+            <reference ref="LessAi.NewSession"/>
+            <reference ref="LessAi.RenameSession"/>
+            <reference ref="LessAi.CloseSession"/>
+        </group>
+    </actions>
 </idea-plugin>

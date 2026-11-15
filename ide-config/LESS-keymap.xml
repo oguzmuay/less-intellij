@@ -1,4 +1,7 @@
 <keymap version="1" name="LESS" parent="Mac OS X 10.5+">
+  <action id="ActivateAIToolWindow">
+    <keyboard-shortcut first-keystroke="meta 3" />
+  </action>
   <action id="ActivateBookmarksToolWindow" />
   <action id="ActivateCommitToolWindow">
     <keyboard-shortcut first-keystroke="meta 0" />
@@ -7,6 +10,7 @@
     <keyboard-shortcut first-keystroke="meta 5" />
   </action>
   <action id="ActivateDebugToolWindow" />
+  <action id="ActivateFindToolWindow" />
   <action id="ActivateFavoritesToolWindow" />
   <action id="Activateair.threadsToolWindow" />
   <action id="ActivateMavenToolWindow">
@@ -43,6 +47,15 @@
   <action id="GotoClass" />
   <action id="GotoFile">
     <keyboard-shortcut first-keystroke="meta o" />
+  </action>
+  <action id="LessAi.NewSession">
+    <keyboard-shortcut first-keystroke="meta t" />
+  </action>
+  <action id="LessAi.NextSession">
+    <keyboard-shortcut first-keystroke="alt meta CLOSE_BRACKET" />
+  </action>
+  <action id="LessAi.PreviousSession">
+    <keyboard-shortcut first-keystroke="alt meta OPEN_BRACKET" />
   </action>
   <action id="RunAnything" />
   <action id="SelectNextOccurrence">

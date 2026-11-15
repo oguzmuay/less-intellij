@@ -11,8 +11,9 @@ Aşağıdaki bölüm `less-ai-plugin` içindir. LESS editörünün AI panelini (
 Tam plan: `docs/plan.md`. Kapsam kararı: **tam LESS eşdeğeri**, dil Kotlin.
 
 ## Durum
-- Aşama 0 (repo) ve Aşama 1 derleme kısmı bitti. **Spike henüz çalıştırılıp görülmedi**: `AiToolWindowFactory` sağdaki `AI` tool window'una bir terminal widget'ı gömüyor; `runIde` ile sandbox'ta shell açıldığı doğrulanmalı.
-- Sıradaki: Aşama 2 (oturum listesi, yeni/rename/close, 4 sağlayıcı), sonra durum tespiti, inbox, keymap/layout.
+- Aşama 0, 1, 2 kodlandı ve derleniyor; **hiçbiri IDE'de çalışırken görülmedi**. Aşama 2: `session/` (AiProvider, SessionStatus, NewSessionRequest, CommandBuilder, AiSession, SessionManager, SessionListener), `toolwindow/` (AiToolWindowFactory, SessionListPanel, SessionContentPanel, SessionCellRenderer), `dialog/NewSessionDialog`, `actions/` (New/Rename/Close/Next/Previous), `plugin.xml` action kayıtları, keymap: Cmd+3 AI paneli, Cmd+T yeni oturum, Opt+Cmd+[ / ] oturum geçişi.
+- Bilinen belirsizlikler: `TerminalWidget.sendCommandToExecute` kabuk henüz başlamadıysa (deferStart=true) komutu bekletiyor mu; oturum durumu şimdilik sahte (STARTING -> 3 sn sonra IDLE).
+- Sıradaki: Aşama 3 (Claude hook'larıyla gerçek durum), 4 (Codex/Gemini/Ollama durumu), 5 (inbox), 6 (layout'ta `AIAssistant` -> `AI`, ayarlar sayfası).
 
 ## Build
 Makinede sistem JDK'sı ve Gradle yok. IntelliJ'in gömülü JBR'si (Java 25) kullanılır:
