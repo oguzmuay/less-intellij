@@ -1,0 +1,6 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- .html/.htm: text editor + JCEF preview in one tab (no built-in same-tab preview exists). -->
+        <fileEditorProvider implementation="dev.less.middle.preview.HtmlPreviewEditorProvider"/>
+    </extensions>
+</idea-plugin>

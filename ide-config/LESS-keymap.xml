@@ -72,4 +72,8 @@
   <action id="LessAi.NextToolWindowTab">
     <keyboard-shortcut first-keystroke="meta shift RIGHT" />
   </action>
+  <action id="ParameterInfo" />
+  <action id="LessMiddle.TogglePreview">
+    <keyboard-shortcut first-keystroke="meta P" />
+  </action>
 </keymap>

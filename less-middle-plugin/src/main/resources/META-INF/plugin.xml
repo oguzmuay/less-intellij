@@ -5,6 +5,8 @@
     <description>Replaces the empty editor screen with a LESS-style logo and shortcut cheat sheet.</description>
 
     <depends>com.intellij.modules.platform</depends>
+    <!-- HTML preview (JCEF) is registered only when the bundled JCEF plugin is present. -->
+    <depends optional="true" config-file="less-middle-jcef.xml">com.intellij.modules.jcef</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService
@@ -15,4 +17,16 @@
                                 implementation="dev.less.middle.monitor.SystemMonitorWidgetFactory"
                                 order="last"/>
     </extensions>
+
+    <projectListeners>
+        <listener class="dev.less.middle.preview.TextFirstLayoutListener"
+                  topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+    </projectListeners>
+
+    <actions>
+        <action id="LessMiddle.TogglePreview"
+                class="dev.less.middle.preview.TogglePreviewAction"
+                text="Toggle Preview"
+                description="Toggle the current file between text and preview (Markdown, HTML, SVG, ...)"/>
+    </actions>
 </idea-plugin>

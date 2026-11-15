@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.less"
-version = providers.gradleProperty("pluginVersion").getOrElse("0.1.2")
+version = providers.gradleProperty("pluginVersion").getOrElse("0.1.3")
 
 val ideaHome: String? by rootProject.extra
 
@@ -17,6 +17,8 @@ dependencies {
     intellijPlatform {
         // Local IDE when installed, otherwise download it (CI).
         if (ideaHome != null) local(ideaHome!!) else intellijIdea(providers.gradleProperty("ideaVersion").getOrElse("2026.3"))
+        // JCEF lives in a bundled plugin since 2026.x; used for the HTML preview.
+        bundledPlugin("com.intellij.modules.jcef")
     }
 }
 
