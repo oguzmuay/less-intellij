@@ -4,9 +4,9 @@ plugins {
 }
 
 group = "dev.lessai"
-version = "0.1.0"
+version = providers.gradleProperty("pluginVersion").getOrElse("0.1.0")
 
-val ideaHome: String by rootProject.extra
+val ideaHome: String? by rootProject.extra
 
 repositories {
     mavenCentral()
@@ -15,7 +15,8 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        local(ideaHome)
+        // Local IDE when installed, otherwise download it (CI).
+        if (ideaHome != null) local(ideaHome!!) else intellijIdea(providers.gradleProperty("ideaVersion").getOrElse("2026.3"))
         bundledPlugin("org.jetbrains.plugins.terminal")
     }
 }

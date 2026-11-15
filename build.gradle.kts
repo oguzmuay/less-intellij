@@ -3,8 +3,8 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.20.1" apply false
 }
 
-/** Path of the locally installed IntelliJ IDEA the plugins are built against. */
-val ideaHome: String by extra {
+/** Path of the locally installed IntelliJ IDEA, or null on CI where the IDE is downloaded instead. */
+val ideaHome: String? by extra {
     val candidates = listOfNotNull(
         providers.environmentVariable("IDEA_HOME").orNull,
         "${System.getProperty("user.home")}/Applications/IntelliJ IDEA.app",
@@ -13,5 +13,4 @@ val ideaHome: String by extra {
         "/Applications/IntelliJ IDEA Ultimate.app",
     )
     candidates.firstOrNull { File(it).exists() }
-        ?: error("IntelliJ IDEA not found. Set IDEA_HOME to the IDE app path.")
 }

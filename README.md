@@ -16,7 +16,7 @@ Close IntelliJ, then run `scripts/install.sh` (builds both plugins, installs the
 
 IntelliJ cannot tell where a manually installed plugin came from, so add a custom plugin repository once:
 `Settings > Plugins > ⚙ > Manage Plugin Repositories > +` and enter
-`https://raw.githubusercontent.com/<owner>/<repo>/main/updatePlugins.xml` (the repo must be public).
+`https://github.com/oguzmuay/less-intellij/releases/latest/download/updatePlugins.xml` (the repo must be public).
 
-To publish a new version: bump `version` in the plugin's `build.gradle.kts`, run
-`GITHUB_REPO=<owner>/<repo> scripts/release.sh`, commit and push `updatePlugins.xml`, then run the printed `gh release create ...` command to upload the zips.
+To publish a new version, push a tag: `git tag v0.2.0 && git push origin v0.2.0`.
+GitHub Actions (`.github/workflows/release.yml`) builds both plugins with that version, creates the release and attaches the zips plus `updatePlugins.xml`. IntelliJ then offers the update.
