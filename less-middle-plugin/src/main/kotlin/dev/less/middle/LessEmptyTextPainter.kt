@@ -44,8 +44,8 @@ class LessEmptyTextPainter : EditorEmptyTextPainter() {
 
     /** Draws one label with its key caps right-aligned inside the table width. */
     private fun paintRow(g2: Graphics2D, label: String, caps: List<String>, left: Int, y: Int, width: Int, height: Int) {
-        val baseline = y + height / 2 + g2.fontMetrics.ascent / 2 - JBUI.scale(2)
         g2.font = UIUtil.getLabelFont().deriveFont(JBUI.scale(14).toFloat())
+        val baseline = y + height / 2 + g2.fontMetrics.ascent / 2 - JBUI.scale(2)
         g2.color = UIUtil.getInactiveTextColor()
         g2.drawString(label, left, baseline)
 
