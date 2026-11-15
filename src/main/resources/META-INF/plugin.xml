@@ -1,0 +1,14 @@
+<idea-plugin>
+    <id>dev.lessai.ai</id>
+    <name>LESS AI</name>
+    <vendor>lessai</vendor>
+    <description>AI agent sessions (Claude, Codex, Gemini, Ollama) in terminal tabs, with status and an agent inbox.</description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="AI" anchor="right" secondary="false"
+                    factoryClass="dev.lessai.toolwindow.AiToolWindowFactory"/>
+    </extensions>
+</idea-plugin>
