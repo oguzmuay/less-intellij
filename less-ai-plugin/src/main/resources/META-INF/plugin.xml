@@ -25,6 +25,10 @@
                 text="Next AI Session" description="Select the next AI session"/>
         <action id="LessAi.PreviousSession" class="dev.lessai.actions.PreviousSessionAction"
                 text="Previous AI Session" description="Select the previous AI session"/>
+        <action id="LessAi.PreviousToolWindowTab" class="dev.lessai.actions.PreviousToolWindowTabAction"
+                text="Previous Tool Window Tab" description="Select the previous tab of the focused tool window"/>
+        <action id="LessAi.NextToolWindowTab" class="dev.lessai.actions.NextToolWindowTabAction"
+                text="Next Tool Window Tab" description="Select the next tab of the focused tool window"/>
         <group id="LessAi.Toolbar" popup="false">
             <reference ref="LessAi.NewSession"/>
             <reference ref="LessAi.RenameSession"/>
