@@ -1,1 +1,3 @@
-rootProject.name = "less-ai-intellij"
+rootProject.name = "less-intellij"
+
+include("less-ai-plugin", "less-middle-plugin")

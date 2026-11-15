@@ -1,6 +1,12 @@
-# less-ai-intellij
+# less-intellij
 
-LESS editörünün AI panelini (Claude/Codex/Gemini/Ollama oturumları + ajanlar arası inbox) IntelliJ'e taşıyan Kotlin plugin'i. Resmi Claude Code plugin'i bilerek KULLANILMIYOR (kullanıcı kalitesinden memnun değil).
+Monorepo: LESS editör deneyimini IntelliJ'e taşıyan plugin'ler + ayarlar. İçinde iki plugin var:
+- `less-ai-plugin/` (`dev.lessai.ai`): AI paneli + inbox (aşağıdaki plan).
+- `less-middle-plugin/` (`dev.less.middle`): boş editör ekranını LESS logosu + keymap'ten okunan kısayol listesiyle değiştirir (`EditorEmptyTextPainter` servisini override eder; 2026.3'te servis `open=true`, ayrıca `editorEmptyTextProvider` / `editorEmptyStateComponentProvider` EP'leri var). Runtime'da görsel olarak doğrulanmadı.
+
+Kurulum (yeni makine): `git clone` -> IntelliJ'i kapat -> `scripts/install.sh` (build + iki plugin + LESS keymap'i IDE config'ine kopyalar).
+
+Aşağıdaki bölüm `less-ai-plugin` içindir. LESS editörünün AI panelini (Claude/Codex/Gemini/Ollama oturumları + ajanlar arası inbox) IntelliJ'e taşıyan Kotlin plugin'i. Resmi Claude Code plugin'i bilerek KULLANILMIYOR (kullanıcı kalitesinden memnun değil).
 
 Tam plan: `docs/plan.md`. Kapsam kararı: **tam LESS eşdeğeri**, dil Kotlin.
 
@@ -12,10 +18,11 @@ Tam plan: `docs/plan.md`. Kapsam kararı: **tam LESS eşdeğeri**, dil Kotlin.
 Makinede sistem JDK'sı ve Gradle yok. IntelliJ'in gömülü JBR'si (Java 25) kullanılır:
 ```
 export JAVA_HOME="$HOME/Applications/IntelliJ IDEA.app/Contents/jbr/Contents/Home"
-./gradlew buildPlugin      # build/distributions/*.zip
-./gradlew runIde           # sandbox IDE
+./gradlew buildPlugin                      # her iki plugin, <modül>/build/distributions/*.zip
+./gradlew :less-ai-plugin:runIde           # sandbox IDE (ai)
+./gradlew :less-middle-plugin:runIde       # sandbox IDE (middle)
 ```
-- Hedef IDE: IntelliJ IDEA Ultimate 2026.3 (build 263.7307.200), `~/Applications/IntelliJ IDEA.app`; `build.gradle.kts` `local()` ile ona karşı derler (`IDEA_HOME` env ile değiştirilebilir). IDE Java 25 ister, toolchain 25.
+- Hedef IDE: IntelliJ IDEA Ultimate 2026.3 (build 263.7307.200), `~/Applications/IntelliJ IDEA.app`; kök `build.gradle.kts` IDE yolunu bulur (`IDEA_HOME` env, sonra `~/Applications`, `/Applications`), alt projeler `local()` ile ona karşı derler. IDE Java 25 ister, toolchain 25.
 - JBR'de `javap` yok; API keşfi için `unzip -p <jar> <class> | strings` kullanıldı.
 - Spring Boot kuralları (global CLAUDE.md) bu projede geçerli DEĞİL (Kotlin IntelliJ plugin'i).
 
@@ -33,3 +40,7 @@ export JAVA_HOME="$HOME/Applications/IntelliJ IDEA.app/Contents/jbr/Contents/Hom
 ## Kullanıcının IntelliJ ayarları (`ide-config/`)
 - `LESS-keymap.xml` -> `~/Library/Application Support/JetBrains/IntelliJIdea2026.3/keymaps/LESS.xml` (macOS keymap'inden türeyen; Cmd+1 Project, Cmd+2 Select Opened File, Cmd+4 Terminal, Cmd+5 Database, Cmd+6 Run, Cmd+7 Git log, Cmd+0 Commit, Cmd+Shift+M Maven, Cmd+O GotoFile, Cmd+Shift+P GotoAction, Cmd+D SelectNextOccurrence, Cmd+Enter FindUsages, Cmd+Shift+W CloseProject). Cmd+Shift+ok bağları KALDIRILDI (kullanıcı istemedi). Cmd+3 boş; plugin'in AI paneline bağlanacak.
 - `window.layouts.xml` (hedef layout: solda Project+Commit, altta Services+Version Control, sağda Terminal+AIAssistant+Database) ve `active-keymap.xml` (`LESS` keymap'ini aktif eder) `options/` altına IDE KAPALIYKEN kopyalanmalı; IDE açıkken kapanırken üzerine yazar. Layout JSON'daki `isVisible` anahtarı tahmin, doğrulanmadı. Plugin tool window ID'si `AI` olacağı için layout'taki `AIAssistant` girdisi `AI` ile değiştirilmeli.
+
+
+## Notlar
+- Cmd+2 çakışması: IntelliJ'in `air` plugin'i `Activateair.threadsToolWindow`'u (Agent Sessions) macOS keymap'inde Cmd+2'ye bağlıyor; `LESS-keymap.xml` bu action'ı ve `ActivateBookmarksToolWindow`'u kaldırıyor. `air` ayrıca Cmd+Enter'ı (`Air.Chat.Prompt.SendNow`) kullanıyor, FindUsages ile çakışabilir.

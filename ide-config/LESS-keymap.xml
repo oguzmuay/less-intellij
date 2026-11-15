@@ -8,6 +8,7 @@
   </action>
   <action id="ActivateDebugToolWindow" />
   <action id="ActivateFavoritesToolWindow" />
+  <action id="Activateair.threadsToolWindow" />
   <action id="ActivateMavenToolWindow">
     <keyboard-shortcut first-keystroke="shift meta m" />
   </action>

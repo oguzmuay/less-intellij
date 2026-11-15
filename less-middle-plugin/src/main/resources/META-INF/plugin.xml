@@ -1,0 +1,15 @@
+<idea-plugin>
+    <id>dev.less.middle</id>
+    <name>LESS Middle</name>
+    <vendor>less</vendor>
+    <description>Replaces the empty editor screen with a LESS-style logo and shortcut cheat sheet.</description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService
+            serviceInterface="com.intellij.openapi.fileEditor.impl.EditorEmptyTextPainter"
+            serviceImplementation="dev.less.middle.LessEmptyTextPainter"
+            overrides="true"/>
+    </extensions>
+</idea-plugin>
