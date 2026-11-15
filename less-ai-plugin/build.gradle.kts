@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.lessai"
-version = providers.gradleProperty("pluginVersion").getOrElse("0.1.0")
+version = providers.gradleProperty("pluginVersion").getOrElse("0.1.1")
 
 val ideaHome: String? by rootProject.extra
 

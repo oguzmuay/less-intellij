@@ -23,6 +23,16 @@ class LessAiSettings : PersistentStateComponent<LessAiSettingsState> {
         get() = state.defaultClaudeConfigDir
         set(value) { state.defaultClaudeConfigDir = value }
 
+    /** Config folder of the Claude profile used last; empty string means the default profile. */
+    var lastClaudeProfileDir: String
+        get() = state.lastClaudeProfileDir
+        set(value) { state.lastClaudeProfileDir = value }
+
+    /** Whether a Claude profile has been chosen before (so an empty dir means "default", not "never chosen"). */
+    var hasLastClaudeProfile: Boolean
+        get() = state.hasLastClaudeProfile
+        set(value) { state.hasLastClaudeProfile = value }
+
     /** Default Ollama model for new sessions. */
     var defaultOllamaModel: String
         get() = state.defaultOllamaModel
