@@ -1,0 +1,29 @@
+<idea-plugin>
+    <id>dev.less.monorepo</id>
+    <name>LESS Monorepo</name>
+    <vendor>less</vendor>
+    <description>Detects Gradle, Maven, Node (React, Next.js, Vue, Angular, ...), Python, Rust, Go, .NET and other
+        modules of a monorepo when the project opens and shows them in the Project view with their own icons.</description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectViewNodeDecorator implementation="dev.less.monorepo.MonorepoNodeDecorator"/>
+        <postStartupActivity implementation="dev.less.monorepo.MonorepoStartupActivity"/>
+        <notificationGroup id="LESS Monorepo" displayType="BALLOON"/>
+    </extensions>
+
+    <projectListeners>
+        <listener class="dev.less.monorepo.MonorepoFileListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    </projectListeners>
+
+    <actions>
+        <action id="LessMonorepo.Rescan"
+                class="dev.less.monorepo.RescanModulesAction"
+                text="Rescan Monorepo Modules"
+                description="Detect the modules of this project again and refresh their icons">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>

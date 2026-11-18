@@ -1,9 +1,10 @@
 name: Release
 
-# Push a tag like v0.2.0 to build both plugins and publish them as a GitHub release.
+# Runs only when a tag like release-0.2.1 is pushed (no runs on branch pushes or other tags).
+# The version after "release-" must match the VERSION file; all plugins are built and released with it.
 on:
   push:
-    tags: ["v*"]
+    tags: ["release-*"]
 
 permissions:
   contents: write
@@ -13,6 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check tag matches VERSION
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#release-}"
+          FILE_VERSION=$(tr -d '[:space:]' < VERSION)
+          if [ "$TAG_VERSION" != "$FILE_VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match VERSION ($FILE_VERSION)"
+            exit 1
+          fi
 
       - uses: actions/setup-java@v4
         with:
@@ -26,7 +36,7 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
         run: |
-          VERSION="${TAG#v}" scripts/release.sh
+          VERSION="${TAG#release-}" scripts/release.sh
 
       - name: Publish release
         env:

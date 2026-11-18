@@ -1,7 +1,7 @@
 #!/bin/bash
 # Builds both plugins and writes updatePlugins.xml pointing at GitHub release assets.
 # Usage: GITHUB_REPO=owner/less-intellij scripts/release.sh
-# CI (.github/workflows/release.yml) runs this on every v* tag and uploads the results to the release.
+# CI (.github/workflows/release.yml) runs this on every release-<version> tag and uploads the results to the release.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 : "${GITHUB_REPO:?Set GITHUB_REPO, e.g. GITHUB_REPO=owner/less-intellij}"
@@ -11,11 +11,11 @@ IDEA_APP="${IDEA_HOME:-$HOME/Applications/IntelliJ IDEA.app}"
 [ -d "$IDEA_APP" ] || IDEA_APP="/Applications/IntelliJ IDEA.app"
 [ -d "$IDEA_APP" ] && export JAVA_HOME="$IDEA_APP/Contents/jbr/Contents/Home"
 
-# VERSION (e.g. 0.2.0) overrides the version of every plugin; TAG defaults to v$VERSION.
-VERSION="${VERSION:-}"
-./gradlew buildPlugin --no-daemon -q ${VERSION:+-PpluginVersion=$VERSION}
+# VERSION (e.g. 0.2.1) is the version of every plugin; defaults to the VERSION file. TAG defaults to release-$VERSION.
+VERSION="${VERSION:-$(tr -d '[:space:]' < VERSION)}"
+./gradlew buildPlugin --no-daemon -q -PpluginVersion="$VERSION"
 
-TAG="${TAG:-v${VERSION:-$(date +%Y.%m.%d-%H%M)}}"
+TAG="${TAG:-release-$VERSION}"
 BASE="https://github.com/$GITHUB_REPO/releases/download/$TAG"
 OUT=updatePlugins.xml
 echo '<?xml version="1.0" encoding="UTF-8"?>' > "$OUT"
