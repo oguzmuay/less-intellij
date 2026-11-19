@@ -9,10 +9,19 @@ import com.intellij.openapi.components.service
 class MonorepoNodeDecorator : ProjectViewNodeDecorator {
     /** Shows the module's icon, e.g. "api  Spring Boot · Gradle · Kotlin", with the full list in the tooltip. */
     override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
-        val dir = node.virtualFile?.takeIf { it.isDirectory } ?: return
+        val file = node.virtualFile ?: return
+        if (!file.isDirectory) {
+            NamedIcons.forFile(file.name)?.let { data.setIcon(it) }
+            return
+        }
+        val dir = file
         val project = node.project?.takeIf { !it.isDisposed } ?: return
         val service = project.service<MonorepoService>()
-        val module = service.moduleAt(dir.path) ?: return
+        val module = service.moduleAt(dir.path)
+        if (module == null) {
+            NamedIcons.forFolder(dir.name)?.let { data.setIcon(it) }
+            return
+        }
 
         data.setIcon(module.primary.icon)
         val label = label(module, service.nestedCount(dir.path))

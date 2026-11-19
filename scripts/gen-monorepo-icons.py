@@ -102,6 +102,31 @@ GLYPHS = {
              'stroke-linecap="round" stroke-linejoin="round"/>'
              '<path d="M6.6 12.6 Q8 10.2 9.4 12.6" stroke="{fg}" stroke-width="1" fill="none" stroke-linecap="round"/>',
              (W, "#1B1B2F")),
+    # page with text lines
+    "docs": ("#D9A21B", "#F0B93A",
+             '<rect x="5.3" y="6.9" width="5.4" height="6.1" rx="0.8" fill="{fg}"/>'
+             '<path d="M6.5 8.7 H9.5 M6.5 10.2 H9.5 M6.5 11.7 H8.4" stroke="{c}" stroke-width="0.7" stroke-linecap="round"/>',
+             ),
+    # two stacked server units with status LEDs
+    "infra": ("#5E6E82", "#8597AD",
+              '<rect x="4.6" y="6.9" width="6.8" height="2.5" rx="0.7" fill="{fg}"/>'
+              '<rect x="4.6" y="10.1" width="6.8" height="2.5" rx="0.7" fill="{fg}"/>'
+              '<circle cx="6" cy="8.15" r="0.5" fill="{c}"/><circle cx="6" cy="11.35" r="0.5" fill="{c}"/>'),
+    # docker: stacked containers riding a wave
+    "docker": ("#2496ED", "#4DB0F7",
+               '<rect x="4.2" y="8.6" width="2.4" height="2" rx="0.3" fill="{fg}"/>'
+               '<rect x="6.8" y="8.6" width="2.4" height="2" rx="0.3" fill="{fg}"/>'
+               '<rect x="9.4" y="8.6" width="2.4" height="2" rx="0.3" fill="{fg}"/>'
+               '<rect x="6.8" y="6.3" width="2.4" height="2" rx="0.3" fill="{fg}"/>'
+               '<path d="M3.8 11.7 Q5.9 13.2 8 11.9 Q10.1 13.2 12.2 11.7" stroke="{fg}" stroke-width="0.9" '
+               'fill="none" stroke-linecap="round"/>'),
+    # kubernetes: ship's wheel (heptagon, hub, seven spokes)
+    "kubernetes": ("#326CE5", "#5C8CF0",
+                   '<path d="M8 6.6 L10.7 7.9 L11.4 10.8 L9.5 13.1 H6.5 L4.6 10.8 L5.3 7.9 Z" stroke="{fg}" '
+                   'stroke-width="0.9" fill="none" stroke-linejoin="round"/>'
+                   '<path d="M8 10 V6.6 M8 10 L10.7 7.9 M8 10 L11.4 10.8 M8 10 L9.5 13.1 M8 10 L6.5 13.1 '
+                   'M8 10 L4.6 10.8 M8 10 L5.3 7.9" stroke="{fg}" stroke-width="0.7"/>'
+                   '<circle cx="8" cy="10" r="1" fill="{fg}"/>'),
 }
 
 
@@ -138,7 +163,12 @@ def main() -> None:
             f.write(icon(name, light, glyph, fg_light))
         with open(os.path.join(OUT, f"{name}_dark.svg"), "w") as f:
             f.write(icon(name + "_dark", dark, glyph, fg_dark))
-    print(f"Wrote {len(GLYPHS) * 2} icons to {os.path.normpath(OUT)}")
+    # VERSION file: a price-tag shape (no folder), light + dark
+    for suffix, col in (("", "#6B7280"), ("_dark", "#A3ABB8")):
+        with open(os.path.join(OUT, f"version{suffix}.svg"), "w") as f:
+            f.write('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">'
+                    f'<path fill-rule="evenodd" d="M2 3.2 Q2 2 3.2 2 H8 L14 8 L8 14 L2 8 Z M5 4.2 A1.1 1.1 0 1 0 5 6.4 A1.1 1.1 0 1 0 5 4.2 Z" fill="{col}"/></svg>\n')
+    print(f"Wrote {len(GLYPHS) * 2 + 2} icons to {os.path.normpath(OUT)}")
 
 
 if __name__ == "__main__":
