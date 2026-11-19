@@ -4,11 +4,22 @@
 Each icon is a folder tinted with the ecosystem's colour plus a small glyph on the front flap.
 Usage: python3 scripts/gen-monorepo-icons.py   (rewrites less-monorepo-plugin/src/main/resources/icons/monorepo/)
 """
+import math
 import os
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "less-monorepo-plugin", "src", "main", "resources", "icons", "monorepo")
 
 W = "#FFFFFF"
+
+
+def rays(cx: float, cy: float, inner: float, outer: float, n: int, start: float = 0) -> str:
+    """Path data for n straight rays around (cx, cy), e.g. a starburst or wheel spokes."""
+    d = []
+    for i in range(n):
+        a = math.radians(start + 360 * i / n)
+        d.append(f"M{cx + inner * math.cos(a):.2f} {cy + inner * math.sin(a):.2f} "
+                 f"L{cx + outer * math.cos(a):.2f} {cy + outer * math.sin(a):.2f}")
+    return " ".join(d)
 
 # name: (light colour, dark colour, glyph svg using {fg} for the glyph colour, optional (light fg, dark fg))
 GLYPHS = {
@@ -127,6 +138,55 @@ GLYPHS = {
                    '<path d="M8 10 V6.6 M8 10 L10.7 7.9 M8 10 L11.4 10.8 M8 10 L9.5 13.1 M8 10 L6.5 13.1 '
                    'M8 10 L4.6 10.8 M8 10 L5.3 7.9" stroke="{fg}" stroke-width="0.7"/>'
                    '<circle cx="8" cy="10" r="1" fill="{fg}"/>'),
+    # .github: a branch that forks off and merges back
+    "github": ("#24292F", "#C9D1D9",
+               '<path d="M6 7.4 V12.4 M10.2 8.6 Q10.2 11 6 11.4" stroke="{fg}" stroke-width="1" fill="none" '
+               'stroke-linecap="round"/><circle cx="6" cy="7.4" r="1.15" fill="{fg}"/>'
+               '<circle cx="6" cy="12.4" r="1.15" fill="{fg}"/><circle cx="10.2" cy="8.4" r="1.15" fill="{fg}"/>',
+               (W, "#24292F")),
+    # .idea: a light bulb (idea)
+    "idea": ("#D63B6F", "#EE5C8C",
+             '<path d="M8 6.6 A2.5 2.5 0 0 1 9.5 11.1 V11.6 H6.5 V11.1 A2.5 2.5 0 0 1 8 6.6 Z" fill="{fg}"/>'
+             '<path d="M6.9 12.7 H9.1" stroke="{fg}" stroke-width="0.9" stroke-linecap="round"/>'),
+    # scripts: a shell prompt
+    "scripts": ("#3B4252", "#6B7686",
+                '<path d="M5 7.8 L7.2 9.9 L5 12" stroke="#7EE787" stroke-width="1.3" fill="none" '
+                'stroke-linecap="round" stroke-linejoin="round"/>'
+                '<path d="M8.4 12.1 H11.2" stroke="{fg}" stroke-width="1.3" stroke-linecap="round"/>'),
+    # config: two sliders
+    "config": ("#8A63D2", "#A585E6",
+               '<path d="M4.8 8 H11.2 M4.8 11.3 H11.2" stroke="{fg}" stroke-width="0.9" stroke-linecap="round"/>'
+               '<circle cx="9.4" cy="8" r="1.25" fill="{fg}"/><circle cx="6.6" cy="11.3" r="1.25" fill="{fg}"/>'
+               '<circle cx="9.4" cy="8" r="0.5" fill="{c}"/><circle cx="6.6" cy="11.3" r="0.5" fill="{c}"/>'),
+    # livekit: a broadcasting dot (live)
+    "livekit": ("#E5484D", "#F2666A",
+                '<circle cx="8" cy="10" r="1.1" fill="{fg}"/>'
+                '<path d="M6.4 8.4 A2.3 2.3 0 0 0 6.4 11.6 M9.6 8.4 A2.3 2.3 0 0 1 9.6 11.6 '
+                'M5 7.1 A4 4 0 0 0 5 12.9 M11 7.1 A4 4 0 0 1 11 12.9" stroke="{fg}" stroke-width="0.9" '
+                'fill="none" stroke-linecap="round"/>'),
+    # whisper: a sound wave
+    "whisper": ("#10A37F", "#2FC79C",
+                '<path d="M4.8 9.3 V10.7 M6.4 8.2 V11.8 M8 7 V13 M9.6 8.4 V11.6 M11.2 9.1 V10.9" stroke="{fg}" '
+                'stroke-width="1" stroke-linecap="round"/>'),
+    # keycloak: a key
+    "keycloak": ("#0089B8", "#33B5E0",
+                 '<circle cx="6.3" cy="10" r="1.55" stroke="{fg}" stroke-width="1.1" fill="none"/>'
+                 '<path d="M7.85 10 H11.5 M10.4 10 V11.5 M11.5 10 V11.2" stroke="{fg}" stroke-width="1.1" '
+                 'stroke-linecap="round"/>'),
+    # seaweedfs: three seaweed fronds
+    "seaweedfs": ("#0E7C86", "#22A9B5",
+                  '<path d="M5.6 13 Q4.8 11.6 5.6 10.2 Q6.4 8.8 5.6 7.6 M8.2 13 Q7.4 11.2 8.2 9.4 Q9 7.8 8.2 6.6 '
+                  'M10.8 13 Q10 11.8 10.8 10.4 Q11.4 9.4 10.9 8.6" stroke="#9BE7A8" stroke-width="1.05" fill="none" '
+                  'stroke-linecap="round"/>'),
+    # .claude / .codex / .gemini: the same marks as their instruction-file badges
+    "claude-dir": ("#D97757", "#E58B6D",
+                   f'<path d="{rays(8, 10, 0.9, 3.3, 8, -90)}" stroke="{{fg}}" stroke-width="1.2" stroke-linecap="round"/>'),
+    "codex-dir": ("#202123", "#ECECF1",
+                  '<path d="M5 7.9 L7.2 10 L5 12.1 M8.4 12.2 H11.2" stroke="{fg}" stroke-width="1.3" fill="none" '
+                  'stroke-linecap="round" stroke-linejoin="round"/>', (W, "#202123")),
+    "gemini-dir": ("#5B6CF0", "#7C8BF7",
+                   '<path d="M8 6.4 C8.3 8.8 9.1 9.6 11.6 10 C9.1 10.3 8.3 11.1 8 13.6 C7.7 11.1 6.9 10.3 4.4 10 '
+                   'C6.9 9.6 7.7 8.8 8 6.4 Z" fill="{fg}"/>'),
 }
 
 
@@ -153,6 +213,103 @@ def icon(name: str, colour: str, glyph: str, fg: str) -> str:
     )
 
 
+S = 'stroke="{fg}" fill="none" stroke-linecap="round" stroke-linejoin="round"'
+
+# File badges (rounded square): name: (light colour, dark colour, glyph, optional (light fg, dark fg))
+BADGES = {
+    # M + down arrow
+    "markdown": ("#2F6FD0", "#4E8BEA",
+                 f'<path d="M3.9 10.6 V5.4 L6 7.9 L8.1 5.4 V10.6 M11.2 5.4 V10.2 M9.5 8.5 L11.2 10.4 L12.9 8.5" '
+                 f'stroke-width="1.35" {S}/>'),
+    # CLAUDE.md: starburst
+    "claude": ("#D97757", "#E58B6D", f'<path d="{rays(8, 8, 1.3, 4.7, 8, -90)}" stroke-width="1.5" {S}/>'),
+    # AGENTS.md (Codex and the agents.md standard): a prompt
+    "agents": ("#202123", "#ECECF1",
+               f'<path d="M4.9 5.6 L7.5 8 L4.9 10.4" stroke-width="1.45" {S}/>'
+               f'<path d="M8.6 10.6 H11.4" stroke-width="1.45" {S}/>', (W, "#202123")),
+    # GEMINI.md: four-point sparkle
+    "gemini": ("#5B6CF0", "#7C8BF7",
+               '<path d="M8 3.4 C8.4 6.6 9.4 7.6 12.6 8 C9.4 8.4 8.4 9.4 8 12.6 C7.6 9.4 6.6 8.4 3.4 8 '
+               'C6.6 7.6 7.6 6.6 8 3.4 Z" fill="{fg}"/>'),
+}
+
+HELM = ("#0F1689", "#5468FF")
+# Kubernetes manifests (heptagon): name: glyph (white, {c} = background), optional colours (default k8s blue)
+K8S = {
+    "k8s-deployment": f'<path d="M10.9 7.3 A3 3 0 1 0 11 10.3" stroke-width="1.2" {S}/>'
+                      f'<path d="M11.3 5.6 L11 7.6 L9 7.4" stroke-width="1.2" {S}/>',
+    "k8s-pod": f'<path d="M8 5.2 L11 6.8 V10.4 L8 12 L5 10.4 V6.8 Z M5 6.8 L8 8.4 L11 6.8 M8 8.4 V12" stroke-width="1" {S}/>',
+    "k8s-service": '<rect x="6.7" y="5.2" width="2.6" height="2" rx="0.4" fill="{fg}"/>'
+                   f'<path d="M8 7.2 V8.8 M5.6 10.2 V8.8 H10.4 V10.2 M8 8.8 V10.2" stroke-width="0.9" {S}/>'
+                   '<rect x="4.5" y="10.2" width="2.2" height="1.8" rx="0.4" fill="{fg}"/>'
+                   '<rect x="6.9" y="10.2" width="2.2" height="1.8" rx="0.4" fill="{fg}"/>'
+                   '<rect x="9.3" y="10.2" width="2.2" height="1.8" rx="0.4" fill="{fg}"/>',
+    "k8s-ingress": f'<path d="M4.5 8.6 H9 M7.3 6.9 L9 8.6 L7.3 10.3" stroke-width="1.2" {S}/>'
+                   f'<path d="M10 5.8 H11.4 V11.4 H10" stroke-width="1.2" {S}/>',
+    "k8s-configmap": f'<path d="M4.8 7.2 H11.2 M4.8 10.2 H11.2" stroke-width="0.9" {S}/>'
+                     '<circle cx="9.4" cy="7.2" r="1.2" fill="{fg}"/><circle cx="6.6" cy="10.2" r="1.2" fill="{fg}"/>',
+    "k8s-secret": '<rect x="5.4" y="8.2" width="5.2" height="3.9" rx="0.7" fill="{fg}"/>'
+                  f'<path d="M6.6 8.2 V7.1 A1.4 1.4 0 0 1 9.4 7.1 V8.2" stroke-width="1.1" {S}/>'
+                  '<circle cx="8" cy="10.1" r="0.6" fill="{c}"/>',
+    "k8s-statefulset": '<path d="M5.2 6.6 V10.8 A2.8 1.1 0 0 0 10.8 10.8 V6.6 Z" fill="{fg}"/>'
+                       '<ellipse cx="8" cy="6.6" rx="2.8" ry="1.1" fill="{fg}"/>'
+                       '<path d="M5.2 6.6 A2.8 1.1 0 0 0 10.8 6.6 M5.2 8.7 A2.8 1.1 0 0 0 10.8 8.7" stroke="{c}" '
+                       'stroke-width="0.6" fill="none"/>',
+    "k8s-daemonset": ''.join(f'<rect x="{x}" y="{y}" width="2.5" height="2.5" rx="0.5" fill="{{fg}}"/>'
+                             for x in (5.3, 8.2) for y in (5.9, 8.8)),
+    "k8s-job": '<path d="M6.3 5.9 L11 8.6 L6.3 11.3 Z" fill="{fg}" stroke="{fg}" stroke-width="0.8" stroke-linejoin="round"/>',
+    "k8s-cronjob": f'<circle cx="8" cy="8.6" r="3.1" stroke-width="1.1" {S}/><path d="M8 6.8 V8.6 L9.4 9.5" stroke-width="1" {S}/>',
+    "k8s-namespace": f'<rect x="4.8" y="5.9" width="6.4" height="5.6" rx="1" stroke-width="1" stroke-dasharray="1.4 0.9" {S}/>',
+    "k8s-volume": '<rect x="4.6" y="6.5" width="6.8" height="4.4" rx="0.9" fill="{fg}"/>'
+                  '<path d="M5.8 9.4 H8.2" stroke="{c}" stroke-width="0.8" stroke-linecap="round"/>'
+                  '<circle cx="9.8" cy="9.4" r="0.55" fill="{c}"/>',
+    "k8s-hpa": f'<path d="M4.6 8.6 H11.4 M6.2 7 L4.6 8.6 L6.2 10.2 M9.8 7 L11.4 8.6 L9.8 10.2" stroke-width="1.1" {S}/>',
+    "k8s-rbac": '<circle cx="8" cy="7" r="1.6" fill="{fg}"/><path d="M4.9 12 A3.1 3.1 0 0 1 11.1 12 Z" fill="{fg}"/>',
+    "k8s-networkpolicy": '<path d="M8 5.2 L11 6.3 V8.7 Q11 11.2 8 12.2 Q5 11.2 5 8.7 V6.3 Z" fill="{fg}"/>',
+    "k8s-kustomization": '<path d="M8 5.4 L11.4 7.2 L8 9 L4.6 7.2 Z" fill="{fg}"/>'
+                         f'<path d="M4.6 9 L8 10.8 L11.4 9 M4.6 10.8 L8 12.6 L11.4 10.8" stroke-width="0.9" {S}/>',
+    "helm-chart": (f'<circle cx="8" cy="8.6" r="2.3" stroke-width="1" {S}/>'
+                   f'<path d="{rays(8, 8.6, 0, 3.7, 8, 22.5)}" stroke-width="0.8" {S}/>'
+                   '<circle cx="8" cy="8.6" r="0.9" fill="{fg}"/>', HELM),
+    "helm-values": (f'<path d="M4.8 7.2 H11.2 M4.8 10.2 H11.2" stroke-width="0.9" {S}/>'
+                    '<circle cx="9.4" cy="7.2" r="1.2" fill="{fg}"/><circle cx="6.6" cy="10.2" r="1.2" fill="{fg}"/>',
+                    HELM),
+}
+K8S_BLUE = ("#326CE5", "#5C8CF0")
+
+
+def file_icon(name: str, colour: str, shape: str, glyph: str, fg: str) -> str:
+    """Builds one file badge: a rounded square or heptagon with a vertical gradient and a glyph."""
+    top = mix(colour, "#FFFFFF", 0.2)
+    gid = f"g_{name}"
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">'
+        f'<defs><linearGradient id="{gid}" x1="0" y1="0" x2="0" y2="1">'
+        f'<stop offset="0" stop-color="{top}"/><stop offset="1" stop-color="{colour}"/></linearGradient></defs>'
+        + shape.format(fill=f"url(#{gid})") + glyph.format(fg=fg, c=colour) + "</svg>\n"
+    )
+
+
+SQUARE = '<rect x="1.5" y="1.5" width="13" height="13" rx="3" fill="{fill}"/>'
+HEPTAGON = ('<path d="M8 1 L13.6 3.7 L15 9.8 L11.1 14.6 H4.9 L1 9.8 L2.4 3.7 Z" fill="{fill}" '
+            'stroke="{fill}" stroke-width="1" stroke-linejoin="round"/>')
+
+
+def write_files() -> int:
+    """Writes the file badges (Markdown, AI instruction files, Kubernetes/Helm manifests); returns the count."""
+    count = 0
+    jobs = [(n, spec[0], spec[1], SQUARE, spec[2], spec[3] if len(spec) > 3 else (W, W)) for n, spec in BADGES.items()]
+    for n, spec in K8S.items():
+        glyph, (light, dark) = (spec, K8S_BLUE) if isinstance(spec, str) else spec
+        jobs.append((n, light, dark, HEPTAGON, glyph, (W, W)))
+    for n, light, dark, shape, glyph, (fg_l, fg_d) in jobs:
+        for suffix, col, fg in (("", light, fg_l), ("_dark", dark, fg_d)):
+            with open(os.path.join(OUT, f"{n}{suffix}.svg"), "w") as f:
+                f.write(file_icon(n + suffix, col, shape, glyph, fg))
+            count += 1
+    return count
+
+
 def main() -> None:
     """Writes <name>.svg and <name>_dark.svg for every glyph."""
     os.makedirs(OUT, exist_ok=True)
@@ -168,7 +325,8 @@ def main() -> None:
         with open(os.path.join(OUT, f"version{suffix}.svg"), "w") as f:
             f.write('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">'
                     f'<path fill-rule="evenodd" d="M2 3.2 Q2 2 3.2 2 H8 L14 8 L8 14 L2 8 Z M5 4.2 A1.1 1.1 0 1 0 5 6.4 A1.1 1.1 0 1 0 5 4.2 Z" fill="{col}"/></svg>\n')
-    print(f"Wrote {len(GLYPHS) * 2 + 2} icons to {os.path.normpath(OUT)}")
+    files = write_files()
+    print(f"Wrote {len(GLYPHS) * 2 + 2 + files} icons to {os.path.normpath(OUT)}")
 
 
 if __name__ == "__main__":

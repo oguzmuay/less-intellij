@@ -9,6 +9,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNodeDecorator implementation="dev.less.monorepo.MonorepoNodeDecorator"/>
+        <fileIconProvider implementation="dev.less.monorepo.NamedFileIconProvider" order="first"/>
         <postStartupActivity implementation="dev.less.monorepo.MonorepoStartupActivity"/>
         <notificationGroup id="LESS Monorepo" displayType="BALLOON"/>
     </extensions>

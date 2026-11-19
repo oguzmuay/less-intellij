@@ -10,10 +10,7 @@ class MonorepoNodeDecorator : ProjectViewNodeDecorator {
     /** Shows the module's icon, e.g. "api  Spring Boot · Gradle · Kotlin", with the full list in the tooltip. */
     override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
         val file = node.virtualFile ?: return
-        if (!file.isDirectory) {
-            NamedIcons.forFile(file.name)?.let { data.setIcon(it) }
-            return
-        }
+        if (!file.isDirectory) return // file icons come from NamedFileIconProvider
         val dir = file
         val project = node.project?.takeIf { !it.isDisposed } ?: return
         val service = project.service<MonorepoService>()
