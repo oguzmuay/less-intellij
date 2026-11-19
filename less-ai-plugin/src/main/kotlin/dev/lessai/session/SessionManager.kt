@@ -47,9 +47,14 @@ class SessionManager(private val project: Project) : Disposable {
             .startShellTerminalWidget(sessionDisposable, options, true)
         TerminalEscapePassthrough.install(widget)
         TerminalSessionSwitchKeys.install(widget, this)
-        widget.sendCommandToExecute(command)
+        // The shell exits when the CLI exits cleanly (e.g. /exit); on an error it stays so the message is readable.
+        widget.sendCommandToExecute("$command && exit")
 
         val session = AiSession(id, name, request.provider, widget, command, sessionDisposable)
+        // Shell gone (CLI exited, or the user typed exit) -> the session's tab closes.
+        widget.addTerminationCallback({
+            ApplicationManager.getApplication().invokeLater({ close(session) }, project.disposed)
+        }, sessionDisposable)
         sessionList.add(session)
         fire { it.sessionsChanged() }
         selected = session

@@ -4,12 +4,33 @@
 set scrolloff=5
 set incsearch
 
+" --- Clipboard: y/p use the macOS clipboard, so yanked text pastes outside IntelliJ too.
+set clipboard+=unnamed
+
+" --- d/c/x only delete; they don't overwrite the clipboard. Cutting = x on a selection (or Cmd+X).
+nnoremap d "_d
+vnoremap d "_d
+nnoremap D "_D
+nnoremap c "_c
+vnoremap c "_c
+nnoremap C "_C
+nnoremap x "_x
+nnoremap s "_s
+
+" --- Selection: in Visual mode, v grows the selection to the next enclosing scope
+" (word -> expression -> statement -> block -> ...); Opt+Down shrinks it again.
+vmap v <Action>(EditorSelectWord)
+
 " Don't use Ex mode, use Q for formatting.
 map Q gq
 
 " --- IdeaVim plugins
 Plug 'machakann/vim-highlightedyank'
 Plug 'tpope/vim-commentary'
+" Extra text objects: ae = whole file, ii/ai = same indentation block, ia/aa = function argument.
+Plug 'kana/vim-textobj-entire'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'vim-scripts/argtextobj.vim'
 
 " --- Shortcut conflicts: Ctrl chords go to Vim (the LESS keymap frees Ctrl+V from the IDE).
 " Vim-owned in all modes it uses them in.
@@ -39,3 +60,6 @@ nmap <D-S-Right> <Action>(NextTab)
 sethandler <D-n> n-v:vim i:ide
 nmap <D-n> <Action>(LessMiddle.OpenNotes)
 vmap <D-n> <Action>(LessMiddle.OpenNotes)
+
+" --- Vim cheat sheet popup (LESS Middle plugin). Replaces Vim's rarely used g? (rot13).
+nmap g? <Action>(LessMiddle.VimCheatSheet)

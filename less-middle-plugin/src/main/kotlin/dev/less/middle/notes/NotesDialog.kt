@@ -10,6 +10,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.OnePixelSplitter
 import com.intellij.util.ui.JBUI
 import java.awt.Font
 import java.awt.event.InputEvent
@@ -22,14 +23,16 @@ import javax.swing.SwingConstants
 import javax.swing.event.DocumentEvent
 
 /**
- * Centered modal with one tab per note. Cmd+Shift+Left/Right switch notes, Cmd+T adds one,
- * Cmd+W deletes the current one, double-click or Cmd+R / Cmd+Shift+R renames, Esc or Cmd+N closes. Edits are saved as you type.
+ * Centered modal with one tab per note; each note has free text on the left and a checklist on the right.
+ * Cmd+Shift+Left/Right switch notes, Cmd+T adds one, Cmd+W deletes the current one, double-click or Cmd+R / Cmd+Shift+R
+ * renames, Cmd+L jumps between the text and the checklist, Esc or Cmd+N closes. Edits are saved as you type.
  */
 class NotesDialog(project: Project?) : DialogWrapper(project, true, IdeModalityType.IDE) {
 
     private val state = NotesStorage.getInstance().state
     private val tabs = JBTabbedPane(SwingConstants.TOP)
     private val areas = mutableListOf<JBTextArea>()
+    private val checklists = mutableListOf<ChecklistPanel>()
 
     init {
         title = "Notes"
@@ -72,6 +75,7 @@ class NotesDialog(project: Project?) : DialogWrapper(project, true, IdeModalityT
         bind(KeyStroke.getKeyStroke(KeyEvent.VK_N, meta)) { close(CANCEL_EXIT_CODE) }
         bind(KeyStroke.getKeyStroke(KeyEvent.VK_R, meta)) { renameCurrent() }
         bind(KeyStroke.getKeyStroke(KeyEvent.VK_R, metaShift)) { renameCurrent() }
+        bind(KeyStroke.getKeyStroke(KeyEvent.VK_L, meta)) { toggleChecklistFocus() }
     }
 
     /** Registers [action] for [stroke] on the whole dialog for its lifetime. */
@@ -79,7 +83,7 @@ class NotesDialog(project: Project?) : DialogWrapper(project, true, IdeModalityT
         DumbAwareAction.create { action() }.registerCustomShortcutSet(CustomShortcutSet(stroke), rootPane, disposable)
     }
 
-    /** Appends a tab whose text area writes every edit back into [note]. */
+    /** Appends a tab (text area + checklist side by side) whose edits are written back into [note]. */
     private fun addTab(note: Note) {
         val area = JBTextArea(note.text).apply {
             lineWrap = true
@@ -92,8 +96,14 @@ class NotesDialog(project: Project?) : DialogWrapper(project, true, IdeModalityT
                 }
             })
         }
+        val checklist = ChecklistPanel(note)
         areas.add(area)
-        tabs.addTab(note.title, JBScrollPane(area).apply { border = JBUI.Borders.empty() })
+        checklists.add(checklist)
+        val split = OnePixelSplitter(false, SPLIT_PROPORTION_KEY, 0.62f).apply {
+            firstComponent = JBScrollPane(area).apply { border = JBUI.Borders.empty() }
+            secondComponent = checklist
+        }
+        tabs.addTab(note.title, split)
     }
 
     /**
@@ -115,20 +125,28 @@ class NotesDialog(project: Project?) : DialogWrapper(project, true, IdeModalityT
         selectTab(tabs.tabCount - 1)
     }
 
-    /** Deletes the current note, asking first when it has text; the last note is only cleared. */
+    /** Moves focus from the note text to the checklist's "Add item" field, or back. */
+    private fun toggleChecklistFocus() {
+        val index = tabs.selectedIndex.takeIf { it >= 0 } ?: return
+        if (checklists[index].hasFocusInside()) areas[index].requestFocusInWindow() else checklists[index].focusInput()
+    }
+
+    /** Deletes the current note, asking first when it has text or items; the last note is only cleared. */
     private fun deleteCurrent() {
         val index = tabs.selectedIndex.takeIf { it >= 0 } ?: return
         val note = state.notes[index]
-        if (note.text.isNotBlank() && Messages.showYesNoDialog(
+        if ((note.text.isNotBlank() || note.items.isNotEmpty()) && Messages.showYesNoDialog(
                 tabs, "Delete note \"${note.title}\"?", "Delete Note", Messages.getQuestionIcon()
             ) != Messages.YES
         ) return
         if (tabs.tabCount == 1) {
             areas[0].text = ""
+            checklists[0].clear()
             return
         }
         state.notes.removeAt(index)
         areas.removeAt(index)
+        checklists.removeAt(index)
         tabs.removeTabAt(index)
         selectTab(index.coerceAtMost(tabs.tabCount - 1))
     }
@@ -157,5 +175,10 @@ class NotesDialog(project: Project?) : DialogWrapper(project, true, IdeModalityT
     private fun editorFont(): Font {
         val scheme = EditorColorsManager.getInstance().globalScheme
         return Font(scheme.editorFontName, Font.PLAIN, scheme.editorFontSize)
+    }
+
+    private companion object {
+        /** Remembers where the user dragged the text / checklist divider. */
+        const val SPLIT_PROPORTION_KEY = "LessMiddle.NotesChecklistSplit"
     }
 }

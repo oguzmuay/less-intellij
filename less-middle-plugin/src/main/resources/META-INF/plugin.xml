@@ -32,5 +32,9 @@
                 class="dev.less.middle.notes.OpenNotesAction"
                 text="Notes"
                 description="Open the notes modal (tabs: Cmd+Shift+Left/Right, new: Cmd+T, delete: Cmd+W)"/>
+        <action id="LessMiddle.VimCheatSheet"
+                class="dev.less.middle.vim.OpenVimCheatSheetAction"
+                text="Vim Cheat Sheet"
+                description="Show the Vim selection, edit and clipboard shortcuts (g? in Normal mode)"/>
     </actions>
 </idea-plugin>

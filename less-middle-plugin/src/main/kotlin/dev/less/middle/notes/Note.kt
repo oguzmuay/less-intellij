@@ -4,6 +4,7 @@ package dev.less.middle.notes
 class Note() {
     var title: String = ""
     var text: String = ""
+    var items: MutableList<ChecklistItem> = mutableListOf()
 
     /** Creates a note with the given title and empty text. */
     constructor(title: String) : this() {

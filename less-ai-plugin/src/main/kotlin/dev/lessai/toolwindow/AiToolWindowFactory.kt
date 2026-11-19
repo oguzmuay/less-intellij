@@ -6,7 +6,6 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
-import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.content.ContentFactory
 import dev.lessai.inbox.InboxNotifier
 import dev.lessai.inbox.MailboxListener
@@ -14,7 +13,7 @@ import dev.lessai.inbox.MailboxService
 import dev.lessai.session.AiProvider
 import dev.lessai.session.SessionManager
 
-/** Builds the AI tool window: a "Sessions" tab (list + terminal) and an "Inbox" tab. */
+/** Builds the AI tool window: a "Sessions" tab (editor-style session tabs) and an "Inbox" tab. */
 class AiToolWindowFactory : ToolWindowFactory, DumbAware {
 
     /** Creates both tabs, keeps the Inbox tab title in sync with unread mail and starts the notifier. */
@@ -22,11 +21,7 @@ class AiToolWindowFactory : ToolWindowFactory, DumbAware {
         val manager = SessionManager.getInstance(project)
         val parent = toolWindow.disposable
         val factory = ContentFactory.getInstance()
-        val splitter = OnePixelSplitter(true, SPLIT_PROPORTION_KEY, 0.3f).apply {
-            firstComponent = SessionListPanel(manager, parent)
-            secondComponent = SessionContentPanel(manager, parent)
-        }
-        val sessions = factory.createContent(splitter, "Sessions", false).apply { isCloseable = false }
+        val sessions = factory.createContent(SessionTabsPanel(project, manager, parent), "Sessions", false).apply { isCloseable = false }
         toolWindow.contentManager.addContent(sessions)
 
         val mailbox = MailboxService.getInstance(project)
@@ -49,7 +44,6 @@ class AiToolWindowFactory : ToolWindowFactory, DumbAware {
 
     private companion object {
         const val TOOLBAR_GROUP_ID = "LessAi.Toolbar"
-        const val SPLIT_PROPORTION_KEY = "LessAi.SessionsSplitter"
         const val INBOX_TITLE = "Inbox"
     }
 }
